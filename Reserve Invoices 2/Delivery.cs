@@ -129,7 +129,7 @@ namespace Reserve_Invoices_2
             if (WarehouseTransferItems.Count > 0)
             {
 
-                // Which price mode
+                // Which transfer mode 
                 var linesInterBranch =
                     WarehouseTransferItems
                     .Where(x => x.IsSameBranch == false).ToArray();    // Stock from warehouses as Delivery/GRPO
@@ -148,8 +148,8 @@ namespace Reserve_Invoices_2
                     deliveryDraft.DocDate = oDraft.DocDate;
                     deliveryDraft.BPL_IDAssignedToInvoice = 1;      // Warehouses always in branch 1
 
-                    // Price mode
-                    //deliveryDraft.PriceMode = oDraft.PriceMode;
+
+
 
                     //var items = WarehouseTransferItems.ToArray();
                     var items = linesInterBranch;
@@ -164,6 +164,13 @@ namespace Reserve_Invoices_2
                         deliveryDraft.Lines.Quantity = items[i].InvQuantity;
                         deliveryDraft.Lines.WarehouseCode = items[i].FromWarehouse;
                         deliveryDraft.Lines.UoMEntry = items[i].InvUomEntry;
+
+                        // Pricing
+                        //var pricemode = deliveryDraft.PriceMode;
+                        //if (pricemode == PriceModeDocumentEnum.pmdGross)
+                        //    deliveryDraft.Lines.GrossPrice = Convert.ToDouble(items[i].grosss.Value);
+                        //if (pricemode == PriceModeDocumentEnum.pmdNet)
+                        //    delivery.Lines.UnitPrice = Convert.ToDouble(items[i].NetPrice.Value);
 
                     }
 
@@ -280,7 +287,7 @@ namespace Reserve_Invoices_2
                     deliveryDraftKS.Lines.Quantity = items[i].Quantity;
                     deliveryDraftKS.Lines.WarehouseCode = WarehouseCode;
                     deliveryDraftKS.Lines.UoMEntry = items[i].UoMEntry;
-
+                    deliveryDraftKS.Lines.VolumeUnit = 4;
                 }
 
                 int result = deliveryDraftKS.Add();
@@ -605,6 +612,7 @@ namespace Reserve_Invoices_2
                 p_lines.UoMEntry = d_lines.UoMEntry;
                 p_lines.UnitPrice = d_lines.UnitPrice;
                 p_lines.WarehouseCode = oDraft.Lines.WarehouseCode;
+                p_lines.VolumeUnit = 4;
 
                 // Batches
 

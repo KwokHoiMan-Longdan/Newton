@@ -979,7 +979,7 @@ namespace Reserve_Invoices_2
                 Console.WriteLine($"Time elaspsed { Math.Floor((DateTime.Now - bigTimer).TotalHours) } H  { Math.Floor((DateTime.Now - bigTimer).TotalMinutes) } m  { (DateTime.Now - bigTimer).Seconds} s");
 
                 if (x > 0)
-                    Console.WriteLine($"Average time/loop {Math.Round((DateTime.Now - bigTimer).TotalSeconds / (x), 1)} s.");
+                    Console.WriteLine($"Average time/loop {Math.Round((DateTime.Now - bigTimer).TotalSeconds / (x), 1)} s");
 
                 Console.WriteLine($"===============================================");
 

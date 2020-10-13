@@ -67,6 +67,8 @@ namespace Reserve_Invoices_2
                 grpo.Lines.UnitPrice = item.oItem.PriceList.Price;
                 grpo.Lines.Currency = item.oItem.PriceList.Currency;
 
+                grpo.Lines.VolumeUnit = 4;
+
 
                 if (item.oItem.ManageBatchNumbers == BoYesNoEnum.tYES)
                 {
