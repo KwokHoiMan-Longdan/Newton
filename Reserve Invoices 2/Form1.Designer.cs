@@ -67,6 +67,7 @@
             this.btnClearAllDrafts = new System.Windows.Forms.Button();
             this.txtTaskList = new System.Windows.Forms.TextBox();
             this.lnkSimple = new System.Windows.Forms.LinkLabel();
+            this.chkAuto = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnConnect
@@ -441,11 +442,24 @@
             this.lnkSimple.Text = "Simple";
             this.lnkSimple.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkSimple_LinkClicked);
             // 
+            // chkAuto
+            // 
+            this.chkAuto.AutoSize = true;
+            this.chkAuto.Checked = true;
+            this.chkAuto.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAuto.Location = new System.Drawing.Point(241, 55);
+            this.chkAuto.Name = "chkAuto";
+            this.chkAuto.Size = new System.Drawing.Size(48, 17);
+            this.chkAuto.TabIndex = 41;
+            this.chkAuto.Text = "Auto";
+            this.chkAuto.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1001, 677);
+            this.Controls.Add(this.chkAuto);
             this.Controls.Add(this.lnkSimple);
             this.Controls.Add(this.txtTaskList);
             this.Controls.Add(this.btnClearAllDrafts);
@@ -532,6 +546,7 @@
         private System.Windows.Forms.Button btnClearAllDrafts;
         private System.Windows.Forms.TextBox txtTaskList;
         private System.Windows.Forms.LinkLabel lnkSimple;
+        private System.Windows.Forms.CheckBox chkAuto;
     }
 }
 

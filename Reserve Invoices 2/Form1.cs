@@ -31,6 +31,12 @@ namespace Reserve_Invoices_2
 
         private StockTransfer StockTransfer = new StockTransfer();
 
+        // Auto
+        int maxLines = 200;
+        int minLines = 50;
+        int trgLines = 100;
+        double avgLinePerSec = 0;
+
         // -----------------------------------
         // Methods
         // -----------------------------------
@@ -76,8 +82,8 @@ namespace Reserve_Invoices_2
             // Console
             Console.WriteLine($"(A) Getting invoices...");
 
-
             int top = int.Parse(txtTop.Text);
+
             Invoice.GetInvoices(top);
 
             Delivery.DeliveryDraftsTaskList.Clear();
@@ -93,13 +99,15 @@ namespace Reserve_Invoices_2
             var result = Delivery.CreateDraft(Sap_Ld, Invoice, PriceModeDocumentEnum.pmdGross);
 
             // Console
-            Console.WriteLine($"Drafts have been created." + Environment.NewLine);
+            Console.WriteLine(result + Environment.NewLine);
 
 
             // Net invoices
             Console.WriteLine($"Creating drafts for net price mode...");
             result = Delivery.CreateDraft(Sap_Ld, Invoice, PriceModeDocumentEnum.pmdNet);
 
+            // Console
+            Console.WriteLine(result + Environment.NewLine);
 
             txtTaskList.Text = string.Join(",", Delivery.DeliveryDraftsTaskList);
 
@@ -567,11 +575,10 @@ namespace Reserve_Invoices_2
 
             string[] draftTaskList = null;
 
-
-
-            //if (loop == 0)
-            //{
             timer = DateTime.Now;
+
+            if (chkAuto.Checked == true)
+                txtTop.Text = trgLines.ToString();
 
 
             // Get Invoices
@@ -582,7 +589,7 @@ namespace Reserve_Invoices_2
 
             //draftKey = Sap_Ld.oCompany.GetNewObjectKey();
             draftTaskList = txtTaskList.Text.Split(',');
-            //}
+
 
             foreach (var draftKey in draftTaskList)
             {
@@ -979,8 +986,38 @@ namespace Reserve_Invoices_2
                 Console.WriteLine($"Time elaspsed { Math.Floor((DateTime.Now - bigTimer).TotalHours) } H  { Math.Floor((DateTime.Now - bigTimer).TotalMinutes) } m  { (DateTime.Now - bigTimer).Seconds} s");
 
                 if (x > 0)
-                    Console.WriteLine($"Average time/loop {Math.Round((DateTime.Now - bigTimer).TotalSeconds / (x), 1)} s");
+                {
+                    double avgTimeLoop = (DateTime.Now - bigTimer).TotalSeconds / x;
+                    double avgLinePerSecond = Convert.ToDouble(trgLines) / avgTimeLoop;
 
+                    Console.WriteLine($"Average time/loop {Math.Round(avgTimeLoop, 1)} s");
+                    Console.WriteLine($"Average line/s {Math.Round(avgLinePerSecond, 1)} s");
+
+                    if (chkAuto.Checked == true)
+                    {
+                        Console.WriteLine($"Previous line/s: {avgLinePerSec}   current line/s: {Math.Round(avgLinePerSecond, 1)}");
+
+                        // Auto update line
+                        if (Math.Round(avgLinePerSecond, 1) > avgLinePerSec)
+                        {
+                            Console.WriteLine($"Target line count {trgLines} ---> {trgLines + 1} (increase)");
+                            trgLines = trgLines + 1;
+
+                            if (trgLines >= maxLines)
+                                trgLines = maxLines;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Target line count {trgLines} ---> {trgLines - 1} (decrease)");
+                            trgLines = trgLines - 1;
+
+                            if (trgLines <= minLines)
+                                trgLines = minLines;
+                        }
+
+                        avgLinePerSec = Math.Round(avgLinePerSecond, 1);
+                    }
+                }
                 Console.WriteLine($"===============================================");
 
                 btnAutomated_Click(null, null);

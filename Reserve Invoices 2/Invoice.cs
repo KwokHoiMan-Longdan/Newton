@@ -36,7 +36,8 @@ namespace Reserve_Invoices_2
                         break;
 
                     case PriceModeDocumentEnum.pmdNetAndGross:
-                        //priceModeCode = "N";
+                        Console.Write("pmdNetAndGross not yet implemented.");
+                        Console.ReadKey();
                         break;
                 }
 

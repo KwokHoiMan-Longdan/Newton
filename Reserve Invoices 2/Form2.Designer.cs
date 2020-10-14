@@ -47,7 +47,7 @@
             // 
             this.txtLoops.Location = new System.Drawing.Point(93, 14);
             this.txtLoops.Name = "txtLoops";
-            this.txtLoops.Size = new System.Drawing.Size(100, 20);
+            this.txtLoops.Size = new System.Drawing.Size(101, 20);
             this.txtLoops.TabIndex = 1;
             this.txtLoops.Text = "100";
             // 
@@ -66,6 +66,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ClientSize = new System.Drawing.Size(206, 63);
             this.Controls.Add(this.lnkAdvanced);
             this.Controls.Add(this.txtLoops);
