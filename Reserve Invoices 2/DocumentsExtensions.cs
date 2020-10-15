@@ -92,7 +92,7 @@ namespace Reserve_Invoices_2
                                 batchesAvailable = allocator.AllocateBatches(lines.ItemCode, lines.WarehouseCode, lines.InventoryQuantity)?.ToArray();
                                 break;
 
-                            case "KIMSON":
+                            case "KIMSON-Newton":
                                 batchesAvailable = allocator.AllocateBatches_KS(lines.ItemCode, lines.WarehouseCode, lines.InventoryQuantity)?.ToArray();
                                 break;
                         }
@@ -120,7 +120,7 @@ namespace Reserve_Invoices_2
                                         binsAvailable = batchesAvailable[j].AllocateBins(allocator.BinCumulation2).ToArray();
                                         break;
 
-                                    case "KIMSON":
+                                    case "KIMSON-Newton":
                                         binsAvailable = batchesAvailable[j].AllocateBins_KS(allocator.BinCumulation2).ToArray();
                                         break;
                                 }
@@ -201,7 +201,7 @@ namespace Reserve_Invoices_2
                                 batchesAvailable = allocator.AllocateBatches(lines.ItemCode, lines.FromWarehouseCode, lines.InventoryQuantity)?.ToArray();
                                 break;
 
-                            case "KIMSON":
+                            case "KIMSON-Newton":
                                 batchesAvailable = allocator.AllocateBatches_KS(lines.ItemCode, lines.FromWarehouseCode, lines.InventoryQuantity)?.ToArray();
                                 break;
                         }
@@ -229,7 +229,7 @@ namespace Reserve_Invoices_2
                                         binsAvailable = batchesAvailable[j].AllocateBins(allocator.BinCumulation2).ToArray();
                                         break;
 
-                                    case "KIMSON":
+                                    case "KIMSON-Newton":
                                         binsAvailable = batchesAvailable[j].AllocateBins_KS(allocator.BinCumulation2).ToArray();
                                         break;
                                 }

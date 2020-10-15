@@ -30,8 +30,12 @@ namespace Reserve_Invoices_2
             List<string> frozenItems = new List<string>();
             List<string> unpurchasableItems = new List<string>();
 
+            string shopAccounting = null;
+
             for (int i = 0; i < items.Length; i++)
             {
+                if (i == 0)
+                    shopAccounting = items[i].ShopWhscode;
 
                 var item = new Item(sap, items[i].ItemCode);
 
@@ -78,10 +82,23 @@ namespace Reserve_Invoices_2
                 }
 
                 // Console
-                Console.WriteLine($"{grpo.Lines.ItemCode} x{grpo.Lines.Quantity} [{grpo.Lines.BatchNumbers.BatchNumber} x{grpo.Lines.BatchNumbers.Quantity}]");
+                Console.WriteLine($"{grpo.Lines.ItemCode} x{grpo.Lines.InventoryQuantity.ToString()} [{grpo.Lines.BatchNumbers.BatchNumber} x{grpo.Lines.BatchNumbers.Quantity}]");
             }
 
-            var result = grpo.Add();
+
+            // Accounting
+            Warehouse shopwhs = new Warehouse(sap, shopAccounting);
+            //Warehouse whsF = new Warehouse(sap, "F");
+            //Warehouse whsLT = new Warehouse(sap, "LT");
+            shopwhs.SetAllocationAccount("208041");
+            //whsF.SetAllocationAccount("208041");
+            //whsLT.SetAllocationAccount("208041");
+
+            int result = grpo.Add();
+
+            shopwhs.RevertInitialAccounts();
+            //whsF.RevertInitialAccounts();
+            //whsLT.RevertInitialAccounts();
 
 
             // Refreeze items

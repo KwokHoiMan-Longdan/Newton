@@ -14,10 +14,11 @@ namespace Reserve_Invoices_2
         {
             get
             {
-                return new string[] { "LONGDAN", "KIMSON" };
+                return new string[] { "LONGDAN-Newton", "KIMSON-Newton" };
             }
         }
         public Company oCompany { get; }
+        public string Database { get; }
         public SAP(string companydb)
         {
             // SAP Server
@@ -25,6 +26,7 @@ namespace Reserve_Invoices_2
 
             // Database
             oCompany.CompanyDB = companydb;
+            Database = companydb;
 
             // Server
             oCompany.Server = ConfigurationManager.AppSettings["server"];

@@ -22,8 +22,8 @@ namespace Reserve_Invoices_2
         public Form2 SimpleForm;
 
         private SAP[] Companies;
-        private SAP Sap_Ld => Companies.SingleOrDefault(x => x.oCompany.CompanyDB == "LONGDAN");
-        private SAP Sap_Ks => Companies.SingleOrDefault(x => x.oCompany.CompanyDB == "KIMSON");
+        private SAP Sap_Ld => Companies.SingleOrDefault(x => x.oCompany.CompanyDB == "LONGDAN-Newton");
+        private SAP Sap_Ks => Companies.SingleOrDefault(x => x.oCompany.CompanyDB == "KIMSON-Newton");
 
         private Invoice Invoice = new Invoice();
 
@@ -33,7 +33,7 @@ namespace Reserve_Invoices_2
 
         // Auto
         int maxLines = 200;
-        int minLines = 50;
+        int minLines = 75;
         int trgLines = 100;
         double avgLinePerSec = 0;
 
@@ -184,7 +184,7 @@ namespace Reserve_Invoices_2
 
             // Console
             if (result == 0)
-                Console.WriteLine($"Batches has been allocated." + Environment.NewLine);
+                Console.WriteLine($"Batches have been allocated." + Environment.NewLine);
             else
                 Console.WriteLine($"Error: " + Sap_Ld.oCompany.GetLastErrorDescription() + Environment.NewLine);
         }
@@ -584,6 +584,9 @@ namespace Reserve_Invoices_2
             // Get Invoices
             btnGetInvoices_Click(null, null);
 
+            if (Invoice.Invoices.Length == 0)
+                return;
+
             // Create drafts
             btnCreateDrafts_Click(null, null);
 
@@ -975,30 +978,45 @@ namespace Reserve_Invoices_2
         private void btnAutomateN_Click(object sender, EventArgs e)
         {
             int loopCount = int.Parse(txtLoopCount.Text);
+            int refreshLoopInternval = 50;
 
             DateTime bigTimer = DateTime.Now;
 
             for (int x = 0; x < loopCount; x++)
             {
+                if (x > 0 && x % refreshLoopInternval == 0)
+                {
+                    // Refreshing memory
+                    Console.Clear();
+                    Console.WriteLine($"===============================================");
+                    Console.WriteLine($"Refreshing SAP...");
+
+                    btnDisconnect_Click(null, null);
+                    Thread.Sleep(3000);
+                    btnConnect_Click(null, null);
+                    Console.WriteLine($"===============================================");
+                }
+
                 Console.Clear();
                 Console.WriteLine($"===============================================");
                 Console.WriteLine($"STARTING LOOP {x + 1} OF {loopCount}");
-                Console.WriteLine($"Time elaspsed { Math.Floor((DateTime.Now - bigTimer).TotalHours) } H  { Math.Floor((DateTime.Now - bigTimer).TotalMinutes) } m  { (DateTime.Now - bigTimer).Seconds} s");
+                Console.WriteLine($"Time elapsed { Math.Floor((DateTime.Now - bigTimer).TotalHours) } H  { (DateTime.Now - bigTimer).Minutes } m  { (DateTime.Now - bigTimer).Seconds} s");
 
                 if (x > 0)
                 {
                     double avgTimeLoop = (DateTime.Now - bigTimer).TotalSeconds / x;
                     double avgLinePerSecond = Convert.ToDouble(trgLines) / avgTimeLoop;
+                    double avgLinePerSecondRounded = Math.Round(avgLinePerSecond, 2);
 
                     Console.WriteLine($"Average time/loop {Math.Round(avgTimeLoop, 1)} s");
-                    Console.WriteLine($"Average line/s {Math.Round(avgLinePerSecond, 1)} s");
-
+                    Console.WriteLine($"Average line/s {avgLinePerSecondRounded} s");
+                    Console.WriteLine($"ETA time left {Math.Round(avgTimeLoop * Convert.ToDouble(loopCount - x + 1) / 60, 0)} minute(s)");
                     if (chkAuto.Checked == true)
                     {
-                        Console.WriteLine($"Previous line/s: {avgLinePerSec}   current line/s: {Math.Round(avgLinePerSecond, 1)}");
+                        Console.WriteLine($"Previous line/s: {avgLinePerSec}   current line/s: {avgLinePerSecondRounded}");
 
                         // Auto update line
-                        if (Math.Round(avgLinePerSecond, 1) > avgLinePerSec)
+                        if (avgLinePerSecondRounded > avgLinePerSec)
                         {
                             Console.WriteLine($"Target line count {trgLines} ---> {trgLines + 1} (increase)");
                             trgLines = trgLines + 1;
@@ -1015,7 +1033,7 @@ namespace Reserve_Invoices_2
                                 trgLines = minLines;
                         }
 
-                        avgLinePerSec = Math.Round(avgLinePerSecond, 1);
+                        avgLinePerSec = avgLinePerSecondRounded;
                     }
                 }
                 Console.WriteLine($"===============================================");
@@ -1030,7 +1048,7 @@ namespace Reserve_Invoices_2
             Console.WriteLine($"===============================================");
             Console.WriteLine($"Completed {loopCount} loops.");
             Console.WriteLine($"Average time per loop {Math.Round((DateTime.Now - bigTimer).TotalSeconds / loopCount, 1)} s.");
-            Console.WriteLine($"TOTAL time elaspsed { Math.Floor((DateTime.Now - bigTimer).TotalHours) } H  { Math.Floor((DateTime.Now - bigTimer).TotalMinutes) } m  { (DateTime.Now - bigTimer).Seconds} s");
+            Console.WriteLine($"TOTAL time elapsed { Math.Floor((DateTime.Now - bigTimer).TotalHours) } H  { (DateTime.Now - bigTimer).Minutes } m  { (DateTime.Now - bigTimer).Seconds} s");
             Console.WriteLine($"===============================================");
         }
 
@@ -1160,6 +1178,30 @@ namespace Reserve_Invoices_2
         {
             SimpleForm.Show();
             this.Hide();
+        }
+
+        private void btnDisconnect_Click(object sender, EventArgs e)
+        {
+            // Console
+            Console.WriteLine("Reconnect companies...");
+
+
+            // Disconnecting companies
+            for (int i = 0; i < Companies.Length; i++)
+            {
+                // Console
+                if (Companies[i].oCompany.Connected)
+                {
+                    Companies[i].oCompany.Disconnect();
+
+                    if (Companies[i] != null)
+                    {
+                        System.Runtime.InteropServices.Marshal.ReleaseComObject(Companies[i].oCompany);
+                        Console.WriteLine($"Company {i} freed.");
+                    }
+                }
+            }
+
         }
     }
 }

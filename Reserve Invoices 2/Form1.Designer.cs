@@ -68,13 +68,14 @@
             this.txtTaskList = new System.Windows.Forms.TextBox();
             this.lnkSimple = new System.Windows.Forms.LinkLabel();
             this.chkAuto = new System.Windows.Forms.CheckBox();
+            this.btnDisconnect = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnConnect
             // 
             this.btnConnect.Location = new System.Drawing.Point(12, 12);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(105, 23);
+            this.btnConnect.Size = new System.Drawing.Size(117, 23);
             this.btnConnect.TabIndex = 2;
             this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
@@ -434,7 +435,7 @@
             // lnkSimple
             // 
             this.lnkSimple.AutoSize = true;
-            this.lnkSimple.Location = new System.Drawing.Point(138, 22);
+            this.lnkSimple.Location = new System.Drawing.Point(310, 17);
             this.lnkSimple.Name = "lnkSimple";
             this.lnkSimple.Size = new System.Drawing.Size(38, 13);
             this.lnkSimple.TabIndex = 40;
@@ -454,11 +455,22 @@
             this.chkAuto.Text = "Auto";
             this.chkAuto.UseVisualStyleBackColor = true;
             // 
+            // btnDisconnect
+            // 
+            this.btnDisconnect.Location = new System.Drawing.Point(135, 12);
+            this.btnDisconnect.Name = "btnDisconnect";
+            this.btnDisconnect.Size = new System.Drawing.Size(100, 23);
+            this.btnDisconnect.TabIndex = 42;
+            this.btnDisconnect.Text = "Disconnect";
+            this.btnDisconnect.UseVisualStyleBackColor = true;
+            this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1001, 677);
+            this.Controls.Add(this.btnDisconnect);
             this.Controls.Add(this.chkAuto);
             this.Controls.Add(this.lnkSimple);
             this.Controls.Add(this.txtTaskList);
@@ -547,6 +559,7 @@
         private System.Windows.Forms.TextBox txtTaskList;
         private System.Windows.Forms.LinkLabel lnkSimple;
         private System.Windows.Forms.CheckBox chkAuto;
+        private System.Windows.Forms.Button btnDisconnect;
     }
 }
 

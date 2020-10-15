@@ -122,7 +122,7 @@ namespace Reserve_Invoices_2
             return results;
         }
 
-        public string CreateDraft()                 // Interco draft
+        public string CreateDraft()                 // Inter-branch draft
         {
             string results = null;
 
@@ -165,6 +165,9 @@ namespace Reserve_Invoices_2
                         deliveryDraft.Lines.WarehouseCode = items[i].FromWarehouse;
                         deliveryDraft.Lines.UoMEntry = items[i].InvUomEntry;
 
+                        // Accounting
+                        deliveryDraft.Lines.COGSAccountCode = "500006";
+
                         // Pricing
                         //var pricemode = deliveryDraft.PriceMode;
                         //if (pricemode == PriceModeDocumentEnum.pmdGross)
@@ -173,6 +176,14 @@ namespace Reserve_Invoices_2
                         //    delivery.Lines.UnitPrice = Convert.ToDouble(items[i].NetPrice.Value);
 
                     }
+
+                    // Accounting
+                    Warehouse whsU49 = new Warehouse(sap, "U49");
+                    Warehouse whsF = new Warehouse(sap, "F");
+                    Warehouse whsLT = new Warehouse(sap, "LT");
+                    whsU49.SetStockAccount("130000");
+                    whsF.SetStockAccount("130000");
+                    whsLT.SetStockAccount("130000");
 
                     int result = deliveryDraft.Add();
 
@@ -183,8 +194,10 @@ namespace Reserve_Invoices_2
                         DraftDocEntry = int.Parse(sap.oCompany.GetNewObjectKey());
                         results = results + "OK - " + DraftDocEntry + Environment.NewLine;
                     }
-                    //                    results = results + "OK - " + sap.oCompany.GetNewObjectKey() + Environment.NewLine;
 
+                    whsU49.RevertInitialAccounts();
+                    whsF.RevertInitialAccounts();
+                    whsLT.RevertInitialAccounts();
                 }
                 else
                     results = "No items for warehouse inter-branch transfer.";
@@ -239,6 +252,14 @@ namespace Reserve_Invoices_2
                     }
 
 
+                    // Accounting
+                    Warehouse whsU49 = new Warehouse(sap, "U49");
+                    Warehouse whsF = new Warehouse(sap, "F");
+                    Warehouse whsLT = new Warehouse(sap, "LT");
+                    whsU49.SetStockAccount("130000-U49");
+                    whsF.SetStockAccount("130000-F");
+                    whsLT.SetStockAccount("130000-LT");
+
                     int result = st.Add();
 
                     if (result != 0)
@@ -248,6 +269,11 @@ namespace Reserve_Invoices_2
                         STDraftDocEntry = int.Parse(sap.oCompany.GetNewObjectKey());
                         results = results + "OK - " + STDraftDocEntry + Environment.NewLine;
                     }
+
+                    whsU49.RevertInitialAccounts();
+                    whsF.RevertInitialAccounts();
+                    whsLT.RevertInitialAccounts();
+
                 }
                 else
                     results = "No items for warehouse stock transfer";
@@ -288,6 +314,9 @@ namespace Reserve_Invoices_2
                     deliveryDraftKS.Lines.WarehouseCode = WarehouseCode;
                     deliveryDraftKS.Lines.UoMEntry = items[i].UoMEntry;
                     deliveryDraftKS.Lines.VolumeUnit = 4;
+
+                    // Accounting
+                    deliveryDraftKS.Lines.COGSAccountCode = "500007";
                 }
 
                 int result = deliveryDraftKS.Add();
@@ -599,6 +628,8 @@ namespace Reserve_Invoices_2
             var p_lines = ld_pdn.Lines;
             var d_lines = ks_del.Lines;
 
+            string shopAccounting = null;
+
             for (int i = 0; i < d_lines.Count; i++)
             {
                 d_lines.SetCurrentLine(i);
@@ -606,6 +637,8 @@ namespace Reserve_Invoices_2
                 if (i > 0)
                     p_lines.Add();
 
+                if (i == 0)
+                    shopAccounting = oDraft.Lines.WarehouseCode;
 
                 p_lines.ItemCode = d_lines.ItemCode;
                 p_lines.Quantity = d_lines.Quantity;
@@ -629,8 +662,21 @@ namespace Reserve_Invoices_2
                     p_lines.BatchNumbers.ExpiryDate = d_lines.BatchNumbers.ExpiryDate;
                 }
             }
+            // Accounting
+            Warehouse shopWhs = new Warehouse(sap, shopAccounting);
+            //Warehouse whsF = new Warehouse(sap, "F");
+            //Warehouse whsLT = new Warehouse(sap, "LT");
+            shopWhs.SetAllocationAccount("208042");
+            //whsF.SetAllocationAccount("208042");
+            //whsLT.SetAllocationAccount("208042");
 
-            return ld_pdn.Add();
+            int result = ld_pdn.Add();
+
+            shopWhs.RevertInitialAccounts();
+            //whsF.RevertInitialAccounts();
+            //whsLT.RevertInitialAccounts();
+
+            return result;
         }
 
         public int ClearDraft()

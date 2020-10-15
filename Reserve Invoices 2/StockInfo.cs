@@ -12,7 +12,7 @@ namespace Reserve_Invoices_2
         public static int GetSysBinAbsByWhscode(SAP sap, string whscode)
         {
             var recordSet = (Recordset)sap.oCompany.GetBusinessObject(BoObjectTypes.BoRecordset);
-            recordSet.DoQuery($"SELECT AbsEntry FROM LONGDAN.DBO.OBIN WHERE SYSBIN = 'Y' AND WhsCode = '{whscode}'");
+            recordSet.DoQuery($"SELECT AbsEntry FROM [LONGDAN-Newton].DBO.OBIN WHERE SYSBIN = 'Y' AND WhsCode = '{whscode}'");
 
             return Convert.ToInt32(recordSet.Fields.Item(0).Value);
         }
